@@ -1,55 +1,39 @@
-## Getting Started
+1. Minting & Supply
 
-Create a project using this example:
+mint(address to, uint256 id, uint256 amount, bytes data) – create tickets.
 
-```bash
-npx thirdweb create --contract --template hardhat-javascript-starter
-```
+mintBatch(address to, uint256[] ids, uint256[] amounts, bytes data) – multiple ticket types at once.
 
-You can start editing the page by modifying `contracts/Contract.sol`.
+setMaxSupply(uint256 id, uint256 max) – limit number of tickets per type.
 
-To add functionality to your contracts, you can use the `@thirdweb-dev/contracts` package which provides base contracts and extensions to inherit. The package is already installed with this project. Head to our [Contracts Extensions Docs](https://portal.thirdweb.com/contractkit) to learn more.
+2. Sales & Payments
 
-## Building the project
+buyTicket(uint256 id, uint256 amount) – buy tickets for ETH or token.
 
-After any changes to the contract, run:
+setPrice(uint256 id, uint256 price) – set ticket price.
 
-```bash
-npm run build
-# or
-yarn build
-```
+3. Metadata & Info
 
-to compile your contracts. This will also detect the [Contracts Extensions Docs](https://portal.thirdweb.com/contractkit) detected on your contract.
+uri(uint256 id) – return metadata for ticket type (event, seat, date).
 
-## Deploying Contracts
+ticketsSold(uint256 id) – track sales.
 
-When you're ready to deploy your contracts, just run one of the following command to deploy you're contracts:
+4. Ownership & Transfer
 
-```bash
-npm run deploy
-# or
-yarn deploy
-```
+Standard ERC-1155 transfers (safeTransferFrom, safeBatchTransferFrom).
 
-> [!IMPORTANT]
-> This requires a secret key to make it work. Get your secret key [here](https://thirdweb.com/dashboard/settings/api-keys).
-> Pass your secret key as a value after `-k` flag.
-> ```bash
-> npm run deploy -- -k <your-secret-key>
-> # or
-> yarn deploy -k <your-secret-key>
+Optional: resellTicket(uint256 id, uint256 amount, address to) for secondary sales.
 
-## Releasing Contracts
+5. Access Control
 
-If you want to release a version of your contracts publicly, you can use one of the followings command:
+Only admin can mint (onlyOwner or onlyAdmin).
 
-```bash
-npm run release
-# or
-yarn release
-```
+Optional whitelist for presales.
 
-## Join our Discord!
+6. Utility / Optional
 
-For any questions, suggestions, join our discord at [https://discord.gg/thirdweb](https://discord.gg/thirdweb).
+pause() / unpause() – stop sales in emergencies.
+
+withdraw() – admin withdraws funds.
+
+checkAvailability(uint256 id) – returns how many tickets are left.
