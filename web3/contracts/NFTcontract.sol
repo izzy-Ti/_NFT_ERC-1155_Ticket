@@ -43,7 +43,7 @@ contract NFTcontract is ERC1155Base {
             Ticket.amount = _amount;
             Ticket.UnitPrice = _UnitPrice;
 
-            //mint the NFT for the admin or seller contract
+            //mint the NFT for the admin or seller contrac
             _mint(_to, NoOfTickets, _amount, _data);
 
 
@@ -58,10 +58,12 @@ contract NFTcontract is ERC1155Base {
             maxSupply[_id] = _max;
         }
 
-        function buyTicket(uint256 _id, uint256 _amount) public {
+        function buyTicket(uint256 _id, uint256 _amount) public payable {
+            require(maxSupply[_id] < _amount, "Incorrect amount");
             uint price = tickets[_id].UnitPrice * _amount;
             require(msg.value != price, "Incorrect ETH sent");
-            tickets[_id].amount = tickets[_id].amount - _amount;
+            tickets[_id].amount -= _amount;
+            _mint(msg.sender, _id, _amount, "");
         }
 
     
