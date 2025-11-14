@@ -31,6 +31,7 @@ contract NFTcontract is ERC1155Base {
         struct ticket {
             address owner;
             uint amount;
+            uint256 totalMinted;
             uint256 UnitPrice;
         }
         mapping(uint256 => ticket) public tickets ;
@@ -63,9 +64,11 @@ contract NFTcontract is ERC1155Base {
             uint price = tickets[_id].UnitPrice * _amount;
             require(msg.value != price, "Incorrect ETH sent");
             tickets[_id].amount -= _amount;
+            tickets[_id].totalMinted += _amount *  tickets[_id].UnitPrice;
             _mint(msg.sender, _id, _amount, "");
         }
-
-    
-
+        function withdraw (uint256 _id ){
+            require(tickets[_id].owner = msg.sender , "Sorry you are not owner");
+            tickets[_id].totalMinted
+        }
 }
