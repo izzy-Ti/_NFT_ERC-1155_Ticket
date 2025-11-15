@@ -53,12 +53,10 @@ contract NFTcontract is ERC1155Base {
             NoOfTickets ++ ;
             return NoOfTickets - 1;
         }
-
         function setMaxSupply(uint256 _id, uint256 _max) public {
             require(msg.sender == admin , 'Sorry you must be an admin');
             maxSupply[_id] = _max;
         }
-
         function buyTicket(uint256 _id, uint256 _amount) public payable {
             require(maxSupply[_id] < _amount, "Incorrect amount");
             uint price = tickets[_id].UnitPrice * _amount;
@@ -67,8 +65,9 @@ contract NFTcontract is ERC1155Base {
             tickets[_id].totalMinted += _amount *  tickets[_id].UnitPrice;
             _mint(msg.sender, _id, _amount, "");
         }
-        function withdraw (uint256 _id ){
-            require(tickets[_id].owner = msg.sender , "Sorry you are not owner");
-            tickets[_id].totalMinted
+        function withdraw (uint256 _id ) external {
+            require(tickets[_id].owner == msg.sender , "Sorry you are not owner");
+            (bool ok, ) = payable(tickets[_id].owner).call{value: tickets[_id].totalMinted}("");
+            require(ok, "Withdraw failed");
         }
 }
