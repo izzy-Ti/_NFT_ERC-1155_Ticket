@@ -1,13 +1,21 @@
-import React, { useState, useEffect } from 'react';
-import { ethers } from 'ethers';
+import { useState, useEffect } from 'react';
+import { ethers, Contract } from 'ethers';
 import { useWallet } from '../hooks/useWallet';
 import { CONTRACT_ABI, CONTRACT_ADDRESS } from '../config/contract';
 
+interface MyTicket {
+  id: number;
+  balance: string;
+  owner: string;
+  unitPrice: string;
+  tokenURI: string;
+}
+
 const MyTickets = () => {
   const { account, provider, isConnected } = useWallet();
-  const [myTickets, setMyTickets] = useState([]);
+  const [myTickets, setMyTickets] = useState<MyTicket[]>([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (isConnected && account && provider) {
@@ -22,10 +30,10 @@ const MyTickets = () => {
     try {
       setLoading(true);
       setError(null);
-      const contract = new ethers.Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
+      const contract = new Contract(CONTRACT_ADDRESS, CONTRACT_ABI, provider);
       const noOfTickets = await contract.NoOfTickets();
       
-      const ticketsData = [];
+      const ticketsData: MyTicket[] = [];
       for (let i = 0; i < Number(noOfTickets); i++) {
         try {
           const balance = await contract.balanceOf(account, i);
@@ -74,9 +82,9 @@ const MyTickets = () => {
       <div className="flex flex-col items-center justify-center py-24">
         <div className="relative">
           <div className="w-16 h-16 border-4 border-gray-800 rounded-full"></div>
-          <div className="w-16 h-16 border-4 border-blue-500 border-t-transparent rounded-full animate-spin absolute top-0 left-0 shadow-[0_0_20px_rgba(59,130,246,0.6)]"></div>
+          <div className="w-16 h-16 border-4 border-neon-blue border-t-transparent rounded-full animate-spin absolute top-0 left-0 neon-glow-blue"></div>
         </div>
-        <p className="mt-8 text-gray-400 text-lg font-medium">Loading your tickets...</p>
+        <p className="mt-8 text-gray-400 body-text-large">Loading your tickets...</p>
       </div>
     );
   }
@@ -93,7 +101,7 @@ const MyTickets = () => {
         <p className="text-gray-400 text-lg mb-4">{error}</p>
         <button
           onClick={loadMyTickets}
-          className="px-6 py-3 bg-transparent border-2 border-blue-500 text-blue-400 rounded-xl transition-all duration-300 font-semibold hover:bg-blue-500 hover:text-black hover:shadow-[0_0_20px_rgba(59,130,246,0.7)] shadow-[0_0_10px_rgba(59,130,246,0.3)]"
+          className="px-6 py-3 glass-effect border-2 border-neon-blue text-neon-blue-light rounded-xl transition-all duration-300 label-text hover:bg-neon-blue hover:text-black hover:neon-glow-blue-strong neon-glow-blue"
         >
           Try Again
         </button>
@@ -116,17 +124,17 @@ const MyTickets = () => {
   }
 
   return (
-    <div className="space-y-8">
-      <div>
-        <h2 className="text-3xl font-bold text-white mb-2">My Tickets</h2>
-        <p className="text-gray-400 text-lg">Your NFT ticket collection</p>
+    <div className="space-y-10">
+      <div className="text-center space-y-3">
+        <h2 className="heading-large text-white">My Tickets</h2>
+        <p className="body-text-large text-gray-400">Your NFT ticket collection</p>
       </div>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
         {myTickets.map((ticket) => (
           <div
             key={ticket.id}
-            className="group bg-black border-2 border-gray-900 rounded-2xl overflow-hidden hover:border-blue-500 transition-all duration-300 hover:shadow-[0_0_30px_rgba(59,130,246,0.3)]"
+            className="group glass-effect border-2 border-dark-border rounded-2xl overflow-hidden hover:border-neon-blue transition-all duration-500 hover:neon-glow-blue-strong transform hover:-translate-y-1"
           >
             {ticket.tokenURI && (
               <div className="relative h-64 bg-gray-900 overflow-hidden">
@@ -135,31 +143,31 @@ const MyTickets = () => {
                   alt={`Ticket ${ticket.id}`}
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                   onError={(e) => {
-                    e.target.style.display = 'none';
+                    (e.target as HTMLImageElement).style.display = 'none';
                   }}
                 />
-                <div className="absolute top-4 right-4 px-3 py-1 bg-black/70 backdrop-blur-sm border border-blue-500/50 rounded-full">
-                  <span className="text-blue-400 text-xs font-semibold">ID #{ticket.id}</span>
+                <div className="absolute top-4 right-4 px-3 py-1 glass-effect border border-neon-blue/50 rounded-full">
+                  <span className="text-neon-blue-light label-text">ID #{ticket.id}</span>
                 </div>
               </div>
             )}
             
             <div className="p-6 space-y-5">
               <div>
-                <h3 className="text-2xl font-bold text-white mb-1">Ticket #{ticket.id}</h3>
-                <div className="h-px bg-gradient-to-r from-blue-500 to-transparent w-12 mt-2"></div>
+                <h3 className="heading-medium text-white mb-1">Ticket #{ticket.id}</h3>
+                <div className="h-px bg-gradient-to-r from-neon-blue to-transparent w-16 mt-2"></div>
               </div>
               
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-400 text-sm">You Own</span>
-                  <span className="text-blue-400 font-bold text-lg drop-shadow-[0_0_8px_rgba(96,165,250,0.5)]">
+                  <span className="text-gray-400 label-text">You Own</span>
+                  <span className="text-neon-blue-light heading-small drop-shadow-[0_0_12px_rgba(96,165,250,0.6)]">
                     {ticket.balance}
                   </span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-gray-400 text-sm">Price per Ticket</span>
-                  <span className="text-white font-semibold">
+                  <span className="text-gray-400 label-text">Price per Ticket</span>
+                  <span className="text-white body-text font-semibold">
                     {parseFloat(ticket.unitPrice).toFixed(4)} ETH
                   </span>
                 </div>
@@ -173,5 +181,3 @@ const MyTickets = () => {
 };
 
 export default MyTickets;
-
-

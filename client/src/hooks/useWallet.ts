@@ -1,12 +1,18 @@
 import { useState, useEffect } from 'react';
-import { ethers } from 'ethers';
+import { ethers, BrowserProvider } from 'ethers';
+
+declare global {
+  interface Window {
+    ethereum?: any;
+  }
+}
 
 export const useWallet = () => {
-  const [account, setAccount] = useState(null);
-  const [provider, setProvider] = useState(null);
-  const [signer, setSigner] = useState(null);
+  const [account, setAccount] = useState<string | null>(null);
+  const [provider, setProvider] = useState<BrowserProvider | null>(null);
+  const [signer, setSigner] = useState<ethers.Signer | null>(null);
   const [isConnected, setIsConnected] = useState(false);
-  const [chainId, setChainId] = useState(null);
+  const [chainId, setChainId] = useState<string | null>(null);
 
   const checkConnection = async () => {
     if (typeof window.ethereum !== 'undefined') {
@@ -37,7 +43,7 @@ export const useWallet = () => {
     };
   }, []);
 
-  const handleAccountsChanged = (accounts) => {
+  const handleAccountsChanged = (accounts: string[]) => {
     if (accounts.length === 0) {
       disconnect();
     } else {
@@ -52,7 +58,7 @@ export const useWallet = () => {
   const connectWallet = async () => {
     if (typeof window.ethereum !== 'undefined') {
       try {
-        const provider = new ethers.BrowserProvider(window.ethereum);
+        const provider = new BrowserProvider(window.ethereum);
         const accounts = await provider.send('eth_requestAccounts', []);
         const signer = await provider.getSigner();
         const network = await provider.getNetwork();
@@ -73,14 +79,14 @@ export const useWallet = () => {
     }
   };
 
-  const switchNetwork = async (networkConfig) => {
+  const switchNetwork = async (networkConfig: any) => {
     if (typeof window.ethereum !== 'undefined') {
       try {
         await window.ethereum.request({
           method: 'wallet_switchEthereumChain',
           params: [{ chainId: networkConfig.chainId }],
         });
-      } catch (switchError) {
+      } catch (switchError: any) {
         if (switchError.code === 4902) {
           try {
             await window.ethereum.request({
@@ -116,5 +122,3 @@ export const useWallet = () => {
     switchNetwork
   };
 };
-
-

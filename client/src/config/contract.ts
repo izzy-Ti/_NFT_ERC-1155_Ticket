@@ -190,7 +190,7 @@ export const CONTRACT_ABI = [
     "stateMutability": "view",
     "type": "function"
   }
-];
+] as const;
 
 // Contract address from web3/README.md
 export const CONTRACT_ADDRESS = "0x048DF70b98a0B2582BC9187618e19A17CD2501B4";
@@ -207,5 +207,3 @@ export const NETWORK_CONFIG = {
   },
   blockExplorerUrls: ["https://sepolia.explorer.zksync.io"]
 };
-
-
